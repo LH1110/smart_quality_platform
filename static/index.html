@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>智能生产质量管理平台</title>
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>智能生产质量管理与知识协作平台</h1>
+  <div class="section">
+    <h3>📚 知识库查询</h3>
+    <input type="text"
+           id="kbQuery"
+           placeholder="输入问题">
+    <button onclick="queryKB()">查询</button>
+    <div id="kbResult"></div>
+  </div>
+  <div class="section">
+    <h3>🔍 材料审核（OCR识别）</h3>
+    <input type="file"
+           id="auditFile"
+           accept="image/*">
+    <button onclick="auditMaterial()">上传审核</button>
+    <div id="auditResult"></div>
+  </div>
+  <script>
+    async function queryKB() {
+      const q = document.getElementById("kbQuery").value;
+      const res = await fetch(`/kb/query?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      document.getElementById("kbResult").innerText = data.answer;
+    }
+
+    async function auditMaterial() {
+      const file = document.getElementById("auditFile").files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/audit/material", { method: "POST", body: formData });
+      const data = await res.json();
+      document.getElementById("auditResult").innerText = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+
+</html>
